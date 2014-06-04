@@ -20,7 +20,7 @@ class Validator implements \AIV\ValidatorInterface {
      * {@inheritdoc}
      */
     public function hasErrors() {
-        $errors = $this->validate();
+        $errors = $this->getErrors();
         return count($errors) > 0;
     }
 
@@ -112,5 +112,9 @@ class Validator implements \AIV\ValidatorInterface {
             throw new \LogicException('You need to set a Constraint Resolver in order to handle custom constraints');
         }
         return $this->resolver;
+    }
+
+    public function getErrors() {
+        return $this->validate();
     }
 }

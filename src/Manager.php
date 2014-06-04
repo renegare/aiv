@@ -72,6 +72,14 @@ class Manager {
         return $validator;
     }
 
+    /**
+     * checks if the validator has been registered. Funny method signature ... but
+     * shaved a few points of the CRAP metric #odd
+     * @param string $name - of validator of interest
+     * @param Closure $success - success call back
+     * @param Closure $failure - fail call back
+     * @return boolean|mixed - or whatever a callback returns
+     */
     public function hasValidator($name, \Closure $success=null, \Closure $failure=null) {
         $value = isset($this->validators[$name]);
 
@@ -82,5 +90,10 @@ class Manager {
         };
 
         return $callback($name);
+    }
+
+    public function getErrors($name) {
+        return $this->getValidator($name)
+            ->getErrors();
     }
 }

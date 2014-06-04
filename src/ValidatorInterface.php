@@ -44,4 +44,12 @@ interface ValidatorInterface {
      * @return void
      */
     public function setConstraintResolver(ConstraintResolverInterface $resolver);
+
+
+    /**
+     * allow for user defined short hand constrant config to be handled by an
+     * external resolver. set it here
+     * @return Symfony\Component\Validator\ConstraintViolationListInterface
+     */
+    public function getErrors();
 }

@@ -64,4 +64,15 @@ class ManagerTest extends BaseTestCase {
         $manager = new Manager();
         $manager->getValidator('non-existent');
     }
+
+    public function testGetErrors() {
+        $mockValidator = $this->getMock('AIV\ValidatorInterface');
+        $mockValidator->expects($this->once())
+            ->method('getErrors');
+
+        $manager = new Manager();
+        $manager->addValidator('test-form', $mockValidator);
+        $manager->setInput($this->getMock('AIV\InputInterface'));
+        $manager->getErrors('test-form');
+    }
 }

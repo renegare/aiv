@@ -160,4 +160,35 @@ class ValidatorTest extends BaseTestCase {
         $validator->setInput($mockInput);
         $validator->hasErrors();
     }
+
+    public function testGetErrors() {
+
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
+        $lengthConstraint = new \Symfony\Component\Validator\Constraints\Length([
+            'min' => 2,
+            'max' => 20
+            ]);
+
+        $validator = new Validator();
+        $validator->setName('test-name');
+        $validator->setConstraints([
+            'name' => [$notBlankConstraint, $lengthConstraint],
+            'email' => [$notBlankConstraint, $emailConstraint]
+        ]);
+
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals('test-name', $name);
+                return ['name' => 'John Smith'];
+            }));
+        $validator->setInput($mockInput);
+        $this->assertTrue($validator->hasErrors());
+        $errors = $validator->getErrors();
+        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationListInterface', $errors);
+        $this->count(1, $errors);
+    }
 }
