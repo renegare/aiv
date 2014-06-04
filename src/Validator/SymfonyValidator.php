@@ -3,6 +3,8 @@
 namespace AIV\Validator;
 
 use AIV\InputInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints\Collection;
 
 class SymfonyValidator implements \AIV\ValidatorInterface {
 
@@ -36,7 +38,11 @@ class SymfonyValidator implements \AIV\ValidatorInterface {
      * {@inheritdoc}
      */
     public function getData() {
-        throw new \Exception('Not Implemented');
+        if($this->hasErrors()) {
+            throw new \RuntimeException('Cannot return data, as data is invalid!');
+        }
+        $data = $this->input->getData();
+        return $data;
     }
 
     public function setConstraints(array $constraints) {
@@ -47,12 +53,39 @@ class SymfonyValidator implements \AIV\ValidatorInterface {
      * the hear of validation here (Note: keeps no state):
      */
     protected function validate() {
-        throw new \Exception('Not Implemented');
-        $data = $this->input->getData('name!?');
+        $data = $this->input->getData();
 
-        // create validation constraint instances
+        $constraints = [];
 
-        // validate aye!?
+        foreach($this->constraints as $fieldName => $constraintsConfig) {
+            $fieldConstraints = [];
+            foreach($constraintsConfig as $constraintConfig) {
+                $fieldConstraints[] = $this->getContsraint($constraintConfig);
+            }
+
+            $constraints[$fieldName] = $fieldConstraints;
+        }
+
+        $constraints = new Collection($constraints);
+        $validator = Validation::createValidator();
+        return $validator->validateValue($data, $constraints);
     }
 
+    public function getContsraint($constraintConfig) {
+        if(is_array($constraintConfig)) {
+            $class = $constraintConfig['type'];
+            $options = $constraintConfig['options'];
+        } else {
+            $class = $constraintConfig;
+            $options = null;
+        }
+
+        $_class = array_map(function($part){
+            return ucfirst($part);
+        }, explode('.', $class));
+        $_class = 'Symfony\Component\Validator\Constraints\\' . implode('', $_class);
+        $class = class_exists($_class)? $_class : $class;
+
+        return new $class($options);
+    }
 }

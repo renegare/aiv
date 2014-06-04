@@ -17,26 +17,83 @@ class SymfonyValidatorTest extends BaseTestCase {
     }
 
     public function testHasErrors() {
+        $validator = new SymfonyValidator();
+
+        $validator->setConstraints([
+            'name' => [
+                'not.blank',
+                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
+            'email' => ['not.blank', 'email']
+        ]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue([
+                'name' => 'John Smith',
+                'email' => 'user@renegare.com'
+            ]));
+        $validator->setInput($mockInput);
+        $this->assertFalse($validator->hasErrors());
+
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->once())
             ->method('getData')
             ->will($this->returnValue([
                 'name' => 'John Smith'
             ]));
+        $validator->setInput($mockInput);
+        $this->assertTrue($validator->hasErrors());
+    }
+
+    public function testGetData() {
+        $validData = [
+            'name' => 'John Smith',
+            'email' => 'user@renegare.com'
+        ];
 
         $validator = new SymfonyValidator();
+
         $validator->setConstraints([
-            'name' => ['required']
+            'name' => [
+                'not.blank',
+                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
+            'email' => ['not.blank', 'email']
         ]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue($validData));
         $validator->setInput($mockInput);
         $this->assertFalse($validator->hasErrors());
+        $this->assertEquals($validData, $validator->getData());
+
     }
 
-    public function xtestHasData() {
-        $this->assertTrue(false);
-    }
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testGetDataException() {
+        $validData = [
+            'name' => 'John Smith'
+        ];
 
-    public function xtestHasDataException() {
-        $this->assertTrue(false);
+        $validator = new SymfonyValidator();
+
+        $validator->setConstraints([
+            'name' => [
+                'not.blank',
+                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
+            'email' => ['not.blank', 'email']
+        ]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue($validData));
+        $validator->setInput($mockInput);
+        $this->assertTrue($validator->hasErrors());
+        $validator->getData();
     }
 }
