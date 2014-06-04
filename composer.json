@@ -1,0 +1,30 @@
+{
+    "name": "renegare/aiv",
+    "description": "api input validator (with support for Silex)",
+    "keywords": ["silex", "validator", "renegare", "skip"],
+    "license": "BWL",
+    "authors": [
+        {
+            "name": "Mudi Ugbowanko",
+            "email": "mudi@renegare.com"
+        }
+    ],
+
+    "minimum-stability": "stable",
+
+    "autoload": {
+        "psr-0": {
+            "AIV": "src"
+        }
+    },
+
+    "require": {
+        "php": ">=5.4.0",
+        "silex/silex": ">=1.0"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "symfony/browser-kit": ">=2.3,<2.5-dev"
+    }
+}
