@@ -7,8 +7,7 @@ use AIV\Manager;
 
 class ManagerTest extends BaseTestCase {
 
-    public function testInputValidation() {
-        $manager = new Manager();
+    public function testPurpose() {
         $inputData = [
             'name' => 'John Smith',
             'unexpected' => 'data'];
@@ -37,9 +36,31 @@ class ManagerTest extends BaseTestCase {
                 return $inputData;
             }));
 
-        $manager->addInputValidator('test-form', $mockValidator, true);
+        $manager = new Manager();
+        $manager->addInputValidator('test-form', $mockValidator);
         $manager->setInput($mockInput);
         $this->assertFalse($manager->hasErrors('test-form'));
         $this->assertEquals($inputData, $manager->getData('test-form'));
+    }
+
+    /**
+     * test that adding two validators with the same name throws an exception
+     * @expectedException LogicException
+     */
+    public function testAddInputValidatorsException() {
+        $mockValidator = $this->getMock('AIV\ValidatorInterface');
+
+        $manager = new Manager();
+        $manager->addInputValidator('test-form', $mockValidator);
+        $manager->addInputValidator('test-form', $mockValidator);
+    }
+
+    /**
+     * test that trying to get a validator that does not exist throws an exception
+     * @expectedException LogicException
+     */
+    public function testGetValidatorException() {
+        $manager = new Manager();
+        $manager->getValidator('non-existent');
     }
 }

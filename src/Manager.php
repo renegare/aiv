@@ -4,7 +4,9 @@ namespace AIV;
 
 class Manager {
 
+    /** @var array of ValidatorInterface */
     protected $validators = [];
+    /** @var InputInterface */
     protected $input;
 
     /**
@@ -16,6 +18,10 @@ class Manager {
      * @return void
      */
     public function addInputValidator($name, ValidatorInterface $validator) {
+        $this->hasValidator($name, function($name){
+            throw new \LogicException(sprintf("You can only register one validator with the name '%s'", $name));
+        }, null);
+
         $this->validators[$name] = $validator;
     }
 
@@ -48,11 +54,33 @@ class Manager {
             ->getData();
     }
 
+    /**
+     * get validator registerd with provided name. Sets input if one is available
+     * @param string $name - name of registered validator
+     * @throws OutOfRangeException - when requested validor does not exist
+     * @return boolean
+     */
     public function getValidator($name) {
+        $this->hasValidator($name, null, function($name){
+            throw new \OutOfRangeException(sprintf("No validator with the name '%s' has been registered", $name));
+        });
+
         $validator = $this->validators[$name];
-        if(!$validator->hasInput()) {
+        if($this->input && !$validator->hasInput()) {
             $validator->setInput($this->input);
         }
         return $validator;
+    }
+
+    public function hasValidator($name, \Closure $success=null, \Closure $failure=null) {
+        $value = isset($this->validators[$name]);
+
+        if($value) {
+            $value = $success? $success($name) : $value;
+        } else {
+            $value = $failure? $failure($name) : $value;
+        }
+
+        return $value;
     }
 }
