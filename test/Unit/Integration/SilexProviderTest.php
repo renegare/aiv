@@ -9,26 +9,26 @@ use Symfony\Component\HttpKernel\Client;
 
 class SilexProviderTest extends BaseTestCase {
 
-    public function testRegister() {
+    public function testPurpose() {
         $app = new Application();
-        $app->register(new SilexProvider);
+        $app->register(new SilexProvider, [
+            'aiv.validators' => [
+                'test-name' => ['name' =>['not.blank']]]]);
 
         $app->post('/', function(Application $app){
             $this->assertEquals([
                 'name' => 'John Smith'
             ], $app['aiv']->getData('test-name'));
+            return '';
         });
 
         $app['exception_handler']->disable();
-        $app['session.test'] = true;
 
         $client = new Client($app, []);
         $client->request('POST', '/', [
-            'name' => 'John Smith'
-        ]);
+            'test-name' => [
+                'name' => 'John Smith']]);
     }
 
-    public function testBoot() {
-        $this->assertTrue(true);
-    }
+
 }
