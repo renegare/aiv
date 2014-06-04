@@ -14,7 +14,7 @@
 
     <testsuites>
         <testsuite name="AIV Test Suite">
-            <directory>./test/src</directory>
+            <directory>./test</directory>
         </testsuite>
     </testsuites>
 
