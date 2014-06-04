@@ -1,13 +1,12 @@
 <?php
 
-namespace AIV\Validator;
+namespace AIV;
 
-use AIV\InputInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraint;
 
-class SymfonyValidator implements \AIV\ValidatorInterface {
+class Validator implements \AIV\ValidatorInterface {
 
     /** @var InputInterface */
     protected $input;

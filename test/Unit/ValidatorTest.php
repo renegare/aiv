@@ -3,21 +3,21 @@
 namespace AIV\Test\Unit\Validator;
 
 use AIV\Test\BaseTestCase;
-use AIV\Validator\SymfonyValidator;
+use AIV\Validator;
 
-class SymfonyValidatorTest extends BaseTestCase {
+class ValidatorTest extends BaseTestCase {
 
     public function testHasInput() {
         $mockInput = $this->getMock('AIV\InputInterface');
 
-        $validator = new SymfonyValidator();
+        $validator = new Validator();
         $this->assertFalse($validator->hasInput());
         $validator->setInput($mockInput);
         $this->assertTrue($validator->hasInput());
     }
 
     public function testHasErrors() {
-        $validator = new SymfonyValidator();
+        $validator = new Validator();
 
         $validator->setConstraints([
             'name' => [
@@ -52,7 +52,7 @@ class SymfonyValidatorTest extends BaseTestCase {
             'email' => 'user@renegare.com'
         ];
 
-        $validator = new SymfonyValidator();
+        $validator = new Validator();
 
         $validator->setConstraints([
             'name' => [
@@ -78,7 +78,7 @@ class SymfonyValidatorTest extends BaseTestCase {
             'name' => 'John Smith'
         ];
 
-        $validator = new SymfonyValidator();
+        $validator = new Validator();
 
         $validator->setConstraints([
             'name' => [
@@ -107,7 +107,7 @@ class SymfonyValidatorTest extends BaseTestCase {
             'email' => 'user@renegare.com'
         ];
 
-        $validator = new SymfonyValidator();
+        $validator = new Validator();
 
         $validator->setConstraints([
             'name' => [
