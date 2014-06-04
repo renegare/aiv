@@ -88,23 +88,6 @@ class Validator implements \AIV\ValidatorInterface {
         } else {
             $constraint = $this->getConstraintResolver()
                 ->resolve($constraintConfig);
-            /*
-            if(is_array($constraintConfig)) {
-                $class = $constraintConfig['type'];
-                $options = $constraintConfig['options'];
-            } else {
-                $class = $constraintConfig;
-                $options = null;
-            }
-
-            $_class = array_map(function($part){
-                return ucfirst($part);
-            }, explode('.', $class));
-            $_class = 'Symfony\Component\Validator\Constraints\\' . implode('', $_class);
-            $class = class_exists($_class)? $_class : $class;
-
-            $constraint = new $class($options);
-            */
         }
 
         return $constraint;

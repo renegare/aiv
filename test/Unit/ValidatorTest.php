@@ -17,13 +17,18 @@ class ValidatorTest extends BaseTestCase {
     }
 
     public function testHasErrors() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
+        $lengthConstraint = new \Symfony\Component\Validator\Constraints\Length([
+            'min' => 2,
+            'max' => 20
+            ]);
+
         $validator = new Validator();
         $validator->setName('test-name');
         $validator->setConstraints([
-            'name' => [
-                'not.blank',
-                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
-            'email' => ['not.blank', 'email']
+            'name' => [$notBlankConstraint, $lengthConstraint],
+            'email' => [$notBlankConstraint, $emailConstraint]
         ]);
 
         $mockInput = $this->getMock('AIV\InputInterface');
@@ -50,6 +55,13 @@ class ValidatorTest extends BaseTestCase {
     }
 
     public function testGetData() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
+        $lengthConstraint = new \Symfony\Component\Validator\Constraints\Length([
+            'min' => 2,
+            'max' => 20
+            ]);
+
         $validData = [
             'name' => 'John Smith',
             'email' => 'user@renegare.com'
@@ -58,10 +70,8 @@ class ValidatorTest extends BaseTestCase {
         $validator = new Validator();
 
         $validator->setConstraints([
-            'name' => [
-                'not.blank',
-                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
-            'email' => ['not.blank', 'email']
+            'name' => [$notBlankConstraint, $lengthConstraint],
+            'email' => [$notBlankConstraint, $emailConstraint]
         ]);
 
         $mockInput = $this->getMock('AIV\InputInterface');
@@ -77,6 +87,13 @@ class ValidatorTest extends BaseTestCase {
      * @expectedException RuntimeException
      */
     public function testGetDataException() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
+        $lengthConstraint = new \Symfony\Component\Validator\Constraints\Length([
+            'min' => 2,
+            'max' => 20
+            ]);
+
         $validData = [
             'name' => 'John Smith'
         ];
@@ -84,10 +101,8 @@ class ValidatorTest extends BaseTestCase {
         $validator = new Validator();
 
         $validator->setConstraints([
-            'name' => [
-                'not.blank',
-                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
-            'email' => ['not.blank', 'email']
+            'name' => [$notBlankConstraint, $lengthConstraint],
+            'email' => [$notBlankConstraint, $emailConstraint]
         ]);
 
         $mockInput = $this->getMock('AIV\InputInterface');
@@ -100,36 +115,7 @@ class ValidatorTest extends BaseTestCase {
     }
 
     /**
-     * assert custom constraint instances are accepted
-     */
-    public function testCustomConstraintInstances() {
-        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
-
-        $validData = [
-            'name' => 'John Smith',
-            'email' => 'user@renegare.com'
-        ];
-
-        $validator = new Validator();
-
-        $validator->setConstraints([
-            'name' => [
-                'not.blank',
-                ['type' => 'length', 'options' => ['min' => 2, 'max' => '20']]],
-            'email' => ['not.blank', $emailConstraint]
-        ]);
-
-        $mockInput = $this->getMock('AIV\InputInterface');
-        $mockInput->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($validData));
-        $validator->setInput($mockInput);
-        $this->assertFalse($validator->hasErrors());
-        $this->assertEquals($validData, $validator->getData());
-    }
-
-    /**
-     * test constraint finder is used
+     * test constraint resolver is used for custom constraint config
      */
     public function testSetConstraintResolver() {
         $constraint = new \Symfony\Component\Validator\Constraints\NotBlank();
