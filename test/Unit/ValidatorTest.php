@@ -1,6 +1,6 @@
 <?php
 
-namespace AIV\Test\Unit\Validator;
+namespace AIV\Test\Unit;
 
 use AIV\Test\BaseTestCase;
 use AIV\Validator;
