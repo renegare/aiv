@@ -131,7 +131,7 @@ class ValidatorTest extends BaseTestCase {
     /**
      * test constraint finder is used
      */
-    public function testSetConstraintFinder() {
+    public function testSetConstraintResolver() {
         $constraint = new \Symfony\Component\Validator\Constraints\NotBlank();
 
         $validData = [
@@ -154,5 +154,24 @@ class ValidatorTest extends BaseTestCase {
         $validator->setInput($mockInput);
         $this->assertFalse($validator->hasErrors());
         $this->assertEquals($validData, $validator->getData());
+    }
+
+    /**
+     * @expectedException LogicException
+     */
+    public function testSetConstraintResolverException() {
+        $validData = [
+            'name' => 'John Smith'
+        ];
+
+        $validator = new Validator();
+        $validator->setConstraints(['name' => ['not.blank']]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue($validData));
+        $validator->setInput($mockInput);
+        $validator->hasErrors();
     }
 }

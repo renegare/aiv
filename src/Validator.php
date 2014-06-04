@@ -86,7 +86,8 @@ class Validator implements \AIV\ValidatorInterface {
         if($constraintConfig instanceof Constraint) {
             $constraint = $constraintConfig;
         } else {
-            $constraint = $this->resolver->resolve($constraintConfig);
+            $constraint = $this->getConstraintResolver()
+                ->resolve($constraintConfig);
             /*
             if(is_array($constraintConfig)) {
                 $class = $constraintConfig['type'];
@@ -121,5 +122,12 @@ class Validator implements \AIV\ValidatorInterface {
      */
     public function setConstraintResolver(ConstraintResolverInterface $resolver) {
         $this->resolver = $resolver;
+    }
+
+    public function getConstraintResolver() {
+        if(!$this->resolver) {
+            throw new \LogicException('You need to set a Constraint Resolver in order to handle custom constraints');
+        }
+        return $this->resolver;
     }
 }
