@@ -14,12 +14,14 @@ class Validator implements \AIV\ValidatorInterface {
     protected $contstraints;
     /** @var string */
     protected $name;
-
+    /** @var ConstraintResolverInterface */
+    protected $resolver;
     /**
      * {@inheritdoc}
      */
     public function hasErrors() {
-        return count($this->validate()) > 0;
+        $errors = $this->validate();
+        return count($errors) > 0;
     }
 
     /**
@@ -84,6 +86,8 @@ class Validator implements \AIV\ValidatorInterface {
         if($constraintConfig instanceof Constraint) {
             $constraint = $constraintConfig;
         } else {
+            $constraint = $this->resolver->resolve($constraintConfig);
+            /*
             if(is_array($constraintConfig)) {
                 $class = $constraintConfig['type'];
                 $options = $constraintConfig['options'];
@@ -99,6 +103,7 @@ class Validator implements \AIV\ValidatorInterface {
             $class = class_exists($_class)? $_class : $class;
 
             $constraint = new $class($options);
+            */
         }
 
         return $constraint;
@@ -109,5 +114,12 @@ class Validator implements \AIV\ValidatorInterface {
      */
     public function setName($name) {
         $this->name = $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConstraintResolver(ConstraintResolverInterface $resolver) {
+        $this->resolver = $resolver;
     }
 }

@@ -36,4 +36,12 @@ interface ValidatorInterface {
      * @param string $name
      */
     public function setName($name);
+
+    /**
+     * allow for user defined short hand constrant config to be handled by an
+     * external resolver. set it here
+     * @param ContraintResolverInterface $resolver
+     * @return void
+     */
+    public function setConstraintResolver(ConstraintResolverInterface $resolver);
 }

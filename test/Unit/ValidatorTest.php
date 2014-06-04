@@ -132,6 +132,27 @@ class ValidatorTest extends BaseTestCase {
      * test constraint finder is used
      */
     public function testSetConstraintFinder() {
+        $constraint = new \Symfony\Component\Validator\Constraints\NotBlank();
 
+        $validData = [
+            'name' => 'John Smith'
+        ];
+
+        $mockConstraintResolver = $this->getMock('AIV\ConstraintResolverInterface');
+        $mockConstraintResolver->expects($this->any())
+            ->method('resolve')
+            ->will($this->returnValue($constraint));
+
+        $validator = new Validator();
+        $validator->setConstraintResolver($mockConstraintResolver);
+        $validator->setConstraints(['name' => ['not.blank']]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue($validData));
+        $validator->setInput($mockInput);
+        $this->assertFalse($validator->hasErrors());
+        $this->assertEquals($validData, $validator->getData());
     }
 }
