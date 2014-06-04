@@ -14,12 +14,8 @@ class ManagerTest extends BaseTestCase {
         $hasInput = false;
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockValidator = $this->getMock('AIV\ValidatorInterface');
-        $mockValidator->expects($this->exactly(2))
-            ->method('hasInput')
-            ->will($this->returnCallback(function() use (&$hasInput){
-                return $hasInput;
-            }));
-        $mockValidator->expects($this->once())
+
+        $mockValidator->expects($this->atLeastOnce())
             ->method('setInput')
             ->will($this->returnCallback(function($input) use ($mockInput, &$hasInput){
                 $this->assertSame($input, $mockInput);
@@ -37,7 +33,7 @@ class ManagerTest extends BaseTestCase {
             }));
 
         $manager = new Manager();
-        $manager->addInputValidator('test-form', $mockValidator);
+        $manager->addValidator('test-form', $mockValidator);
         $manager->setInput($mockInput);
         $this->assertFalse($manager->hasErrors('test-form'));
         $this->assertEquals($inputData, $manager->getData('test-form'));
@@ -51,8 +47,8 @@ class ManagerTest extends BaseTestCase {
         $mockValidator = $this->getMock('AIV\ValidatorInterface');
 
         $manager = new Manager();
-        $manager->addInputValidator('test-form', $mockValidator);
-        $manager->addInputValidator('test-form', $mockValidator);
+        $manager->addValidator('test-form', $mockValidator);
+        $manager->addValidator('test-form', $mockValidator);
     }
 
     /**

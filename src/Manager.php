@@ -13,11 +13,11 @@ class Manager {
      * add/register an input validator instance. If two or more validators are
      * registerd with the same name, an error is thrown
      * @param string $name - user defined name for the validator instance
-     * @param InputValidatorInterface $validator
+     * @param ValidatorInterface $validator
      * @throws LogicException - when two instances are registered with the same name
      * @return void
      */
-    public function addInputValidator($name, ValidatorInterface $validator) {
+    public function addValidator($name, ValidatorInterface $validator) {
         $this->hasValidator($name, function($name){
             throw new \LogicException(sprintf("You can only register one validator with the name '%s'", $name));
         }, null);
@@ -66,21 +66,20 @@ class Manager {
         });
 
         $validator = $this->validators[$name];
-        if($this->input && !$validator->hasInput()) {
-            $validator->setInput($this->input);
-        }
+        $validator->setInput($this->input);
+
         return $validator;
     }
 
     public function hasValidator($name, \Closure $success=null, \Closure $failure=null) {
         $value = isset($this->validators[$name]);
 
-        if($value) {
-            $value = $success? $success($name) : $value;
-        } else {
-            $value = $failure? $failure($name) : $value;
-        }
+        $callback = $value? $success : $failure;
 
-        return $value;
+        $callback = $callback? $callback : function($name) use ($value){
+            return $value;
+        };
+
+        return $callback($name);
     }
 }
