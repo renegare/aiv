@@ -30,4 +30,10 @@ interface ValidatorInterface {
      * @return array
      */
     public function getData();
+
+    /**
+     * set namespace of the data to get from the input
+     * @param string $name
+     */
+    public function setName($name);
 }

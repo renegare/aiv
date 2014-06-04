@@ -21,6 +21,11 @@ class ManagerTest extends BaseTestCase {
                 $this->assertSame($input, $mockInput);
                 $hasInput = true;
             }));
+        $mockValidator->expects($this->atLeastOnce())
+            ->method('setName')
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals('test-form', $name);
+            }));
         $mockValidator->expects($this->once())
             ->method('hasErrors')
             ->will($this->returnCallback(function(){

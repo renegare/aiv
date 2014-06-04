@@ -18,7 +18,7 @@ class ValidatorTest extends BaseTestCase {
 
     public function testHasErrors() {
         $validator = new Validator();
-
+        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [
                 'not.blank',
@@ -29,19 +29,22 @@ class ValidatorTest extends BaseTestCase {
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([
-                'name' => 'John Smith',
-                'email' => 'user@renegare.com'
-            ]));
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals('test-name', $name);
+                return [
+                    'name' => 'John Smith',
+                    'email' => 'user@renegare.com'];
+            }));
         $validator->setInput($mockInput);
         $this->assertFalse($validator->hasErrors());
 
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([
-                'name' => 'John Smith'
-            ]));
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals('test-name', $name);
+                return ['name' => 'John Smith'];
+            }));
         $validator->setInput($mockInput);
         $this->assertTrue($validator->hasErrors());
     }

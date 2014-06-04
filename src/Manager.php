@@ -22,6 +22,7 @@ class Manager {
             throw new \LogicException(sprintf("You can only register one validator with the name '%s'", $name));
         }, null);
 
+        $validator->setName($name);
         $this->validators[$name] = $validator;
     }
 

@@ -12,6 +12,8 @@ class Validator implements \AIV\ValidatorInterface {
     protected $input;
     /** @var array */
     protected $contstraints;
+    /** @var string */
+    protected $name;
 
     /**
      * {@inheritdoc}
@@ -41,7 +43,7 @@ class Validator implements \AIV\ValidatorInterface {
         if($this->hasErrors()) {
             throw new \RuntimeException('Cannot return data, as data is invalid!');
         }
-        $data = $this->input->getData();
+        $data = $this->input->getData($this->name);
         return $data;
     }
 
@@ -54,7 +56,7 @@ class Validator implements \AIV\ValidatorInterface {
      * @return Symfony\Component\Validator\ConstraintViolationListInterface
      */
     protected function validate() {
-        $data = $this->input->getData();
+        $data = $this->input->getData($this->name);
 
         $constraints = [];
 
@@ -100,5 +102,12 @@ class Validator implements \AIV\ValidatorInterface {
         }
 
         return $constraint;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setName($name) {
+        $this->name = $name;
     }
 }
