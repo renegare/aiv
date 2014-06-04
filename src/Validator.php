@@ -50,7 +50,8 @@ class Validator implements \AIV\ValidatorInterface {
     }
 
     /**
-     * the hear of validation here (Note: keeps no state):
+     * the hear of validation here (Note: keeps no state)
+     * @return Symfony\Component\Validator\ConstraintViolationListInterface
      */
     protected function validate() {
         $data = $this->input->getData();
@@ -71,6 +72,12 @@ class Validator implements \AIV\ValidatorInterface {
         return $validator->validateValue($data, $constraints);
     }
 
+    /**
+     * takes a constraint configuration string|array or a Constraint instance and return
+     * a Constraint
+     * @param mixed $constraintConfig
+     * @return Symfony\Component\Validator\Constraint
+     */
     public function getContsraint($constraintConfig) {
         if($constraintConfig instanceof Constraint) {
             $constraint = $constraintConfig;
