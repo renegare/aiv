@@ -127,4 +127,11 @@ class ValidatorTest extends BaseTestCase {
         $this->assertFalse($validator->hasErrors());
         $this->assertEquals($validData, $validator->getData());
     }
+
+    /**
+     * test constraint finder is used
+     */
+    public function testSetConstraintFinder() {
+
+    }
 }

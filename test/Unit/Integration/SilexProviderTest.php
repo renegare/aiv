@@ -13,7 +13,11 @@ class SilexProviderTest extends BaseTestCase {
         $app = new Application();
         $app->register(new SilexProvider, [
             'aiv.validators' => [
-                'test-name' => ['name' =>['not.blank']]]]);
+                'test-name' => [
+                    'name' =>['not.blank']]]]);
+/*
+,
+'email' => ['not.blank', '%email.validator%']*/
 
         $app->post('/', function(Application $app){
             $this->assertEquals([
