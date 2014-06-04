@@ -13,8 +13,8 @@
     "minimum-stability": "stable",
 
     "autoload": {
-        "psr-0": {
-            "AIV": "src"
+        "psr-4": {
+            "AIV\\": "src"
         }
     },
 
