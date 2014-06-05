@@ -52,4 +52,10 @@ interface ValidatorInterface {
      * @return Symfony\Component\Validator\ConstraintViolationListInterface
      */
     public function getErrors();
+
+    /**
+     * set options for how the validator validates
+     * @param array $options
+     */
+    public function setOptions(array $options);
 }

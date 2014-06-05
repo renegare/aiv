@@ -191,4 +191,81 @@ class ValidatorTest extends BaseTestCase {
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationListInterface', $errors);
         $this->count(1, $errors);
     }
+
+    /**
+     * by default the cache option is false, and therefore will fully validate
+     * the data from the input every time. This can be to much for constraints that
+     * require an external resource. The cache option will validate the data once
+     * and cache the state thereafter
+     */
+    public function testCacheOption() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->once())
+            ->method('getData')
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals('test-name', $name);
+                return ['name' => 'John Smith'];
+            }));
+
+        $validator = new Validator();
+        $validator->setOptions(['cache' => true]);
+        $validator->setName('test-name');
+        $validator->setConstraints([
+            'name' => [$notBlankConstraint]
+        ]);
+        $validator->setInput($mockInput);
+        $validator->hasErrors();
+        $validator->hasErrors();
+        $validator->getErrors();
+        $validator->getErrors();
+        $validator->getData();
+        $validator->getData();
+    }
+
+    public function testAllowExtraFieldsOption() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+
+        $expectedData = ['name' => 'John Smith', 'extra' => 'param'];
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnCallback(function($name) use ($expectedData){
+                $this->assertEquals('test-name', $name);
+                return $expectedData;
+            }));
+
+        $validator = new Validator();
+        $validator->setOptions(['allow.extra.params' => true]);
+        $validator->setName('test-name');
+        $validator->setConstraints([
+            'name' => [$notBlankConstraint]
+        ]);
+        $validator->setInput($mockInput);
+        $this->assertEquals($expectedData, $validator->getData());
+    }
+
+    public function testAllowMissingParamsOption() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+
+        $expectedData = ['name' => 'John Smith'];
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->any())
+            ->method('getData')
+            ->will($this->returnCallback(function($name) use ($expectedData){
+                $this->assertEquals('test-name', $name);
+                return $expectedData;
+            }));
+
+        $validator = new Validator();
+        $validator->setOptions(['allow.missing.params' => true]);
+        $validator->setName('test-name');
+        $validator->setConstraints([
+            'name' => [$notBlankConstraint],
+            'email' => [$notBlankConstraint]
+        ]);
+        $validator->setInput($mockInput);
+        $this->assertEquals($expectedData, $validator->getData());
+    }
 }

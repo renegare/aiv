@@ -29,7 +29,7 @@ class SilexProvider implements ServiceProviderInterface, \AIV\ConstraintResolver
             foreach($validators as $name => $validatorConstraints) {
                 $validator = new Validator();
                 $validator->setConstraintResolver($this);
-                $validator->setConstraints($validatorConstraints);
+                $validator->setConstraints($validatorConstraints['params']);
                 $manager->addValidator($name, $validator);
             }
 

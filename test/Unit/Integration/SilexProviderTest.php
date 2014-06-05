@@ -18,12 +18,13 @@ class SilexProviderTest extends BaseTestCase {
         $app->register(new SilexProvider, [
             'aiv.validators' => [
                 'test-name' => [
-                    'name' =>[
-                        'not.blank',
-                        [
-                            'type' => 'length',
-                            'options' => ['min' => 2, 'max' => 20]]],
-                    'email' => ['not.blank', '%email.validator%']]]]);
+                    'params' => [
+                        'name' => [
+                            'not.blank',
+                            [
+                                'type' => 'length',
+                                'options' => ['min' => 2, 'max' => 20]]],
+                        'email' => ['not.blank', '%email.validator%']]]]]);
         $app['email.validator'] = $app->share(function() {
             return new \Symfony\Component\Validator\Constraints\Email;
         });

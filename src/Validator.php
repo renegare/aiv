@@ -16,6 +16,13 @@ class Validator implements \AIV\ValidatorInterface {
     protected $name;
     /** @var ConstraintResolverInterface */
     protected $resolver;
+    /** @var Symfony\Component\Validator\ConstraintViolationListInterface */
+    protected $cachedValidation;
+    /** @var array */
+    protected $options;
+    /** @var array */
+    protected $cachedData;
+
     /**
      * {@inheritdoc}
      */
@@ -45,7 +52,19 @@ class Validator implements \AIV\ValidatorInterface {
         if($this->hasErrors()) {
             throw new \RuntimeException('Cannot return data, as data is invalid!');
         }
-        $data = $this->input->getData($this->name);
+
+        return $this->getRawData();
+    }
+
+    protected function getRawData() {
+        if(!$this->cachedData) {
+            $data = $this->input->getData($this->name);
+            if($this->options['cache']) {
+                $this->cachedData = $data;
+            }
+        } else {
+            $data = $this->cachedData;
+        }
         return $data;
     }
 
@@ -58,22 +77,35 @@ class Validator implements \AIV\ValidatorInterface {
      * @return Symfony\Component\Validator\ConstraintViolationListInterface
      */
     protected function validate() {
-        $data = $this->input->getData($this->name);
+        if(!$this->cachedValidation) {
+            $data = $this->getRawData();
 
-        $constraints = [];
+            $constraints = [];
 
-        foreach($this->constraints as $fieldName => $constraintsConfig) {
-            $fieldConstraints = [];
-            foreach($constraintsConfig as $constraintConfig) {
-                $fieldConstraints[] = $this->getContsraint($constraintConfig);
+            foreach($this->constraints as $fieldName => $constraintsConfig) {
+                $fieldConstraints = [];
+                foreach($constraintsConfig as $constraintConfig) {
+                    $fieldConstraints[] = $this->getContsraint($constraintConfig);
+                }
+
+                $constraints[$fieldName] = $fieldConstraints;
             }
 
-            $constraints[$fieldName] = $fieldConstraints;
-        }
+            $constraints = new Collection([
+                'fields' => $constraints,
+                'allowExtraFields' => $this->options['allow.extra.params'],
+                'allowMissingFields' => $this->options['allow.missing.params']
+            ]);
 
-        $constraints = new Collection($constraints);
-        $validator = Validation::createValidator();
-        return $validator->validateValue($data, $constraints);
+            $validator = Validation::createValidator();
+            $cacheValidation = $validator->validateValue($data, $constraints);
+            if($this->options['cache']) {
+                $this->cacheValidation = $cacheValidation;
+            }
+        } else {
+            $cacheValidation = $this->cacheValidation;
+        }
+        return $cacheValidation;
     }
 
     /**
@@ -114,7 +146,21 @@ class Validator implements \AIV\ValidatorInterface {
         return $this->resolver;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getErrors() {
         return $this->validate();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOptions(array $options) {
+        $this->options = array_merge([
+            'cache' => false,
+            'allow.extra.params' => false,
+            'allow.missing.params' => false
+        ], $options);
     }
 }
