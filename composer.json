@@ -2,7 +2,7 @@
     "name": "renegare/aiv",
     "description": "api input validator (with support for Silex)",
     "keywords": ["silex", "validator", "renegare", "skip"],
-    "license": "BWL",
+    "license": "MIT",
     "authors": [
         {
             "name": "Mudi Ugbowanko",
