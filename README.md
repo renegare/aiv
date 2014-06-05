@@ -52,3 +52,12 @@ $app->run();
 ### More
 
 TBC
+
+## Test
+
+Check out the repo and from the top level directory run the
+following command (xdebug required for coverage):
+˜
+```
+$ composer update && vendor/bin/phpunit --coverage-text
+```
