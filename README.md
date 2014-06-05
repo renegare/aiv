@@ -24,12 +24,18 @@ $app = new \Silex\Application();
 $app->register(new \AIV\Integration\SilexProvider, [
     'aiv.validators' => [
         'test-name' => [
-            'name' =>[
-                'not.blank',
-                [
-                    'type' => 'length',
-                    'options' => ['min' => 2, 'max' => 20]]],
-            'email' => ['not.blank', '%email.validator%']]]]);
+            'options' => [
+                'allow.extra.params' => true,
+                'allow.missing.params' => true
+            ],
+            'params' => [
+                'name' => [
+                    'not.blank',
+                    [
+                        'type' => 'length',
+                        'options' => ['min' => 2, 'max' => 20]]],
+                'email' => ['not.blank', '%email.validator%'],
+                'password' => ['not.blank']]]]]);
 
 $app['email.validator'] = $app->share(function() {
     return new \Symfony\Component\Validator\Constraints\Email;
@@ -61,3 +67,7 @@ following command (xdebug required for coverage):
 ```
 $ composer update && vendor/bin/phpunit --coverage-text
 ```
+
+## Behind The Scene Lib
+
+The actual validation of data is handled by: Symfony/Validator Component
