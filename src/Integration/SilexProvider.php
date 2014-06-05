@@ -28,6 +28,7 @@ class SilexProvider implements ServiceProviderInterface, \AIV\ConstraintResolver
             $validators = $app['aiv.validators'];
             foreach($validators as $name => $validatorConstraints) {
                 $validator = new Validator();
+                $validator->setOptions(isset($validatorConstraints['options']) ? $validatorConstraints['options'] : []);
                 $validator->setConstraintResolver($this);
                 $validator->setConstraints($validatorConstraints['params']);
                 $manager->addValidator($name, $validator);

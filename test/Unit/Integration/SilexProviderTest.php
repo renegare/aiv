@@ -12,19 +12,27 @@ class SilexProviderTest extends BaseTestCase {
     public function testPurpose() {
         $postData = [
             'name' => 'John Smith',
-            'email' => 'web@internet.com'];
+            'email' => 'web@internet.com',
+            'fav_colour' => 'red'
+        ];
 
         $app = new Application();
         $app->register(new SilexProvider, [
             'aiv.validators' => [
                 'test-name' => [
+                    'options' => [
+                        'allow.extra.params' => true,
+                        'allow.missing.params' => true
+                    ],
                     'params' => [
                         'name' => [
                             'not.blank',
                             [
                                 'type' => 'length',
                                 'options' => ['min' => 2, 'max' => 20]]],
-                        'email' => ['not.blank', '%email.validator%']]]]]);
+                        'email' => ['not.blank', '%email.validator%'],
+                        'password' => ['not.blank']]]]]);
+
         $app['email.validator'] = $app->share(function() {
             return new \Symfony\Component\Validator\Constraints\Email;
         });
