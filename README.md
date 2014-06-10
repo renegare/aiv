@@ -68,11 +68,13 @@ TBC
 
 Check out the repo and from the top level directory run the
 following command (xdebug required for coverage):
-˜
+
 ```
 $ composer update && vendor/bin/phpunit --coverage-text
 ```
 
 ## Behind The Scene Lib
 
-The actual validation of data is handled by: Symfony/Validator Component
+The actual validation of data is handled by: [Symfony/Validator Component][1]
+
+[1]: https://packagist.org/packages/symfony/validator
