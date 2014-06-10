@@ -9,15 +9,10 @@ use Symfony\Component\HttpKernel\Client;
 
 class SilexProviderTest extends BaseTestCase {
 
-    public function testPurpose() {
-        $postData = [
-            'name' => 'John Smith',
-            'email' => 'web@internet.com',
-            'fav_colour' => 'red'
-        ];
-
-        $app = new Application();
-        $app->register(new SilexProvider, [
+    public function setup() {
+        // Taken from the README.md: START
+        $app = new \Silex\Application();
+        $app->register(new \AIV\Integration\SilexProvider, [
             'aiv.validators' => [
                 'test-name' => [
                     'options' => [
@@ -37,16 +32,47 @@ class SilexProviderTest extends BaseTestCase {
             return new \Symfony\Component\Validator\Constraints\Email;
         });
 
-        $app->post('/', function(Application $app) use ($postData){
-            $this->assertEquals($postData, $app['aiv']->getData('test-name'));
-            return '';
+        $app->post('/', function(Application $app) {
+            $apiValidator = $app['aiv'];
+            if($apiValidator->hasErrors('test-name')) {
+                $errors = [];
+                foreach($apiValidator->getErrors('test-name') as $violation) {
+                    $path = preg_replace('/[\[\]]/', '', $violation->getPropertyPath());
+                    $errors[$path] = $violation->getMessage();
+                }
+                return sprintf('You have errors: <pre>%s</pre>', print_r($errors, true));
+            } else {
+                return sprintf('You sent me valid data:<br /><pre>%s</pre>',
+                    print_r($apiValidator->getData('test-name'), true));
+            }
         });
+        // Taken from the README.md: END
 
-        $app['exception_handler']->disable();
+        $this->app = $app;
+    }
 
-        $client = new Client($app, []);
-        $client->request('POST', '/', [
-            'test-name' => $postData]);
+    /**
+     * @dataProvider providePostData
+     */
+    public function testValidData($label, $postData, $expectedResponse) {
+        $client = new Client($this->app, []);
+
+        $label = 'Test Case: ' . $label;
+        $client->request('POST', '/', ['test-name' => $postData]);
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk(), $label);
+        $this->assertContains($expectedResponse, $response->getContent(), $label);
+    }
+
+    public function providePostData() {
+        return [
+            ['Valid Post Data', [
+                'name' => 'John Smith',
+                'email' => 'web@internet.com',
+                'fav_colour' => 'red'], 'You sent me valid data:'],
+            ['Invalid Post Data', [], 'You have errors:'],
+            ['Invalid Post Data', ['email' => 'ksdksdk'], 'You have errors:']
+        ];
     }
 
 
