@@ -101,7 +101,9 @@ class Validator implements \AIV\ValidatorInterface {
                     'allowMissingFields' => $this->options['allow.missing.params']
                 ]);
 
-                $validator = Validation::createValidator();
+                $validator = Validation::createValidatorBuilder()
+                    ->setApiVersion(Validation::API_VERSION_2_4)
+                    ->getValidator();
                 $cachedValidation = $validator->validateValue($data, $constraints);
             } catch (EmptyDataException $e) {
                 $violation = new ConstraintViolation('Data is empty', 'Data is empty', [], $data, '', $data);
