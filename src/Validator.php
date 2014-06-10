@@ -5,6 +5,8 @@ namespace AIV;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class Validator implements \AIV\ValidatorInterface {
 
@@ -79,26 +81,33 @@ class Validator implements \AIV\ValidatorInterface {
     protected function validate() {
         if(!$this->cachedValidation) {
             $data = $this->getRawData();
+            try {
+                $this->verifyNotEmpty($data);
 
-            $constraints = [];
+                $constraints = [];
 
-            foreach($this->constraints as $fieldName => $constraintsConfig) {
-                $fieldConstraints = [];
-                foreach($constraintsConfig as $constraintConfig) {
-                    $fieldConstraints[] = $this->getContsraint($constraintConfig);
+                foreach($this->constraints as $fieldName => $constraintsConfig) {
+                    $fieldConstraints = [];
+                    foreach($constraintsConfig as $constraintConfig) {
+                        $fieldConstraints[] = $this->getContsraint($constraintConfig);
+                    }
+
+                    $constraints[$fieldName] = $fieldConstraints;
                 }
 
-                $constraints[$fieldName] = $fieldConstraints;
+                $constraints = new Collection([
+                    'fields' => $constraints,
+                    'allowExtraFields' => $this->options['allow.extra.params'],
+                    'allowMissingFields' => $this->options['allow.missing.params']
+                ]);
+
+                $validator = Validation::createValidator();
+                $cacheValidation = $validator->validateValue($data, $constraints);
+            } catch (EmptyDataException $e) {
+                $violation = new ConstraintViolation('Data is empty', 'Data is empty', [], $data, '', $data);
+                $cacheValidation = new ConstraintViolationList([$violation]);
             }
 
-            $constraints = new Collection([
-                'fields' => $constraints,
-                'allowExtraFields' => $this->options['allow.extra.params'],
-                'allowMissingFields' => $this->options['allow.missing.params']
-            ]);
-
-            $validator = Validation::createValidator();
-            $cacheValidation = $validator->validateValue($data, $constraints);
             if($this->options['cache']) {
                 $this->cacheValidation = $cacheValidation;
             }
@@ -162,5 +171,16 @@ class Validator implements \AIV\ValidatorInterface {
             'allow.extra.params' => false,
             'allow.missing.params' => false
         ], $options);
+    }
+
+    /**
+     *
+     */
+    public function verifyNotEmpty($data) {
+        if(!is_array($data) || count($data) < 1) {
+            throw new EmptyDataException('Empty data!');
+        }
+
+        return true;
     }
 }

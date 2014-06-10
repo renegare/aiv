@@ -268,4 +268,39 @@ class ValidatorTest extends BaseTestCase {
         $validator->setInput($mockInput);
         $this->assertEquals($expectedData, $validator->getData());
     }
+
+    /**
+     * AIV considers data to be empty if it fails one of the criterias:
+     * * must be an array
+     * * size must be greater than 0
+     */
+    public function provideDataConsideredAsEmpty(){
+        return [
+            [null],
+            [[]],
+            [''],
+            ['yes its not empty, but its also not an array!']
+        ];
+    }
+    /**
+     * @dataProvider provideDataConsideredAsEmpty
+     */
+    public function testEmptyDataError($emptyData) {
+
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+
+        $validator = new Validator();
+        $validator->setName('test-name');
+        $validator->setConstraints(['name' => [$notBlankConstraint]]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->once())
+            ->method('getData')
+            ->will($this->returnCallback(function() use ($emptyData){
+                return $emptyData;
+            }));
+
+        $validator->setInput($mockInput);
+        $this->assertTrue($validator->hasErrors());
+    }
 }
