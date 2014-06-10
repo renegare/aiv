@@ -102,19 +102,20 @@ class Validator implements \AIV\ValidatorInterface {
                 ]);
 
                 $validator = Validation::createValidator();
-                $cacheValidation = $validator->validateValue($data, $constraints);
+                $cachedValidation = $validator->validateValue($data, $constraints);
             } catch (EmptyDataException $e) {
                 $violation = new ConstraintViolation('Data is empty', 'Data is empty', [], $data, '', $data);
-                $cacheValidation = new ConstraintViolationList([$violation]);
+                $cachedValidation = new ConstraintViolationList([$violation]);
             }
 
             if($this->options['cache']) {
-                $this->cacheValidation = $cacheValidation;
+                $this->cachedValidation = $cachedValidation;
             }
         } else {
-            $cacheValidation = $this->cacheValidation;
+            $cachedValidation = $this->cachedValidation;
         }
-        return $cacheValidation;
+
+        return $cachedValidation;
     }
 
     /**
