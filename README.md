@@ -73,6 +73,10 @@ following command (xdebug required for coverage):
 $ composer update && vendor/bin/phpunit --coverage-text
 ```
 
+## Road Map
+
+- [ ] "Modelesque" Classes that represent validation requirements ($instance_variables vs annotations) 
+
 ## Behind The Scene Lib
 
 The actual validation of data is handled by: [Symfony/Validator Component][1]
