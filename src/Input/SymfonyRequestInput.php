@@ -20,7 +20,7 @@ class SymfonyRequestInput implements \AIV\InputInterface {
     /**
      * {@inheritdoc}
      */
-    public function getData($name) {
+    public function getData($name = null) {
         return $this->request->get($name);
     }
 }
