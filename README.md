@@ -60,9 +60,18 @@ $app->run();
 
 ```
 
-### More
+### JSON Input
 
-TBC
+Typical JSON Rest API applications take input from the body in the form of json. There
+the default input handler will not work as it effectively looks in the $_POST array.
+
+Simply add this code after registering the provider:
+
+```
+$app['aiv.input'] = $this->share(function(){
+    new \AIV\Input\SymfonyRequest\JSONInput;
+});
+```
 
 ## Test
 
@@ -75,7 +84,7 @@ $ composer update && vendor/bin/phpunit --coverage-text
 
 ## Road Map
 
-- [ ] "Modelesque" Classes that represent validation requirements ($instance_variables vs annotations) 
+- [ ] "Modelesque" Classes that represent validation requirements ($instance_variables vs annotations)
 
 ## Behind The Scene Lib
 

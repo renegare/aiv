@@ -51,8 +51,19 @@ class SilexProviderTest extends BaseTestCase {
         $this->app = $app;
     }
 
+    public function provideData() {
+        return [
+            ['Valid Post Data', [
+                'name' => 'John Smith',
+                'email' => 'web@internet.com',
+                'fav_colour' => 'red'], 'You sent me valid data:'],
+            ['Invalid Post Data', [], 'You have errors:'],
+            ['Invalid Post Data', ['email' => 'ksdksdk'], 'You have errors:']
+        ];
+    }
+
     /**
-     * @dataProvider providePostData
+     * @dataProvider provideData
      */
     public function testValidData($label, $postData, $expectedResponse) {
         $client = new Client($this->app, []);
@@ -64,15 +75,19 @@ class SilexProviderTest extends BaseTestCase {
         $this->assertContains($expectedResponse, $response->getContent(), $label);
     }
 
-    public function providePostData() {
-        return [
-            ['Valid Post Data', [
-                'name' => 'John Smith',
-                'email' => 'web@internet.com',
-                'fav_colour' => 'red'], 'You sent me valid data:'],
-            ['Invalid Post Data', [], 'You have errors:'],
-            ['Invalid Post Data', ['email' => 'ksdksdk'], 'You have errors:']
-        ];
+    /**
+     * @dataProvider provideData
+     */
+    public function testValidJsonData($label, $data, $expectedResponse) {
+        $this->app['aiv.input'] = new \AIV\Input\SymfonyRequest\JSONInput;
+
+        $client = new Client($this->app, []);
+
+        $label = 'Test Case: ' . $label;
+        $client->request('POST', '/', [], [], [], json_encode(['test-name' => $data]));
+        $response = $client->getResponse();
+        $this->assertTrue($response->isOk(), $label);
+        $this->assertContains($expectedResponse, $response->getContent(), $label);
     }
 
 
