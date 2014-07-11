@@ -1,12 +1,12 @@
 <?php
 
-namespace AIV\Test\Unit\Input;
+namespace AIV\Test\Unit\Input\SymfonyRequest;
 
 use AIV\Test\BaseTestCase;
-use AIV\Input\SymfonyRequestJSONInput;
+use AIV\Input\SymfonyRequest\JSONInput;
 use Symfony\Component\HttpFoundation\Request;
 
-class SymfonyRequestJSONInputTest extends BaseTestCase {
+class JSONInputTest extends BaseTestCase {
 
     public function testPurpose() {
         $expectedData = [
@@ -19,7 +19,7 @@ class SymfonyRequestJSONInputTest extends BaseTestCase {
         $jsonBody = json_encode($expectedData);
         $request = Request::create('/', 'POST', [], [], [], [], $jsonBody);
 
-        $input = new SymfonyRequestJSONInput();
+        $input = new JSONInput();
         $input->setRequest($request);
         $this->assertEquals($expectedData['namespace'], $input->getData('namespace'));
     }
@@ -35,7 +35,7 @@ class SymfonyRequestJSONInputTest extends BaseTestCase {
         $jsonBody = json_encode($expectedData);
         $request = Request::create('/', 'POST', [], [], [], [], $jsonBody);
 
-        $input = new SymfonyRequestJSONInput();
+        $input = new JSONInput();
         $input->setRequest($request);
         $this->assertEquals($expectedData, $input->getData());
     }
@@ -55,7 +55,7 @@ class SymfonyRequestJSONInputTest extends BaseTestCase {
 
         $request = Request::create('/', 'POST', [], [], [], [], $jsonBody);
 
-        $input = new SymfonyRequestJSONInput();
+        $input = new JSONInput();
         $input->setRequest($request);
         $this->assertEquals([], $input->getData());
     }

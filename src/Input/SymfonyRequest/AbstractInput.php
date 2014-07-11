@@ -1,10 +1,10 @@
 <?php
 
-namespace AIV\Input;
+namespace AIV\Input\SymfonyRequest;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class SymfonyRequestInput implements \AIV\InputInterface {
+abstract class AbstractInput implements \AIV\InputInterface {
 
     protected $request;
 
@@ -15,12 +15,5 @@ class SymfonyRequestInput implements \AIV\InputInterface {
      */
     public function setRequest(Request $request) {
         $this->request = $request;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData($name = null) {
-        return $this->request->get($name);
     }
 }

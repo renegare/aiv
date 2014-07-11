@@ -4,7 +4,7 @@ namespace AIV\Integration;
 
 use AIV\Manager;
 use AIV\Validator;
-use AIV\Input\SymfonyRequestInput;
+use AIV\Input\SymfonyRequest\FormInput;
 
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -39,7 +39,7 @@ class SilexProvider implements ServiceProviderInterface, \AIV\ConstraintResolver
         });
 
         $app['aiv.input'] = $app->share(function(){
-            return new SymfonyRequestInput();
+            return new FormInput();
         });
     }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace AIV\Input;
+namespace AIV\Input\SymfonyRequest;
 
-class SymfonyRequestJSONInput extends SymfonyRequestInput {
+class JSONInput extends AbstractInput {
 
     /**
      * {@inheritdoc}

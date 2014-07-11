@@ -1,11 +1,11 @@
 <?php
 
-namespace AIV\Test\Unit\Input;
+namespace AIV\Test\Unit\Input\SymfonyRequest;
 
 use AIV\Test\BaseTestCase;
-use AIV\Input\SymfonyRequestInput;
+use AIV\Input\SymfonyRequest\FormInput;
 
-class SymfonyRequestInputTest extends BaseTestCase {
+class FormInputTest extends BaseTestCase {
 
     public function testPurpose() {
         $expectedData = [
@@ -20,7 +20,7 @@ class SymfonyRequestInputTest extends BaseTestCase {
             ->method('get')
             ->will($this->returnValue($expectedData));
 
-        $input = new SymfonyRequestInput();
+        $input = new FormInput();
         $input->setRequest($request);
         $this->assertEquals($expectedData, $input->getData('test-name'));
     }
