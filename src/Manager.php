@@ -22,7 +22,6 @@ class Manager {
             throw new \LogicException(sprintf("You can only register one validator with the name '%s'", $name));
         }, null);
 
-        $validator->setName($name);
         $this->validators[$name] = $validator;
     }
 
@@ -40,9 +39,9 @@ class Manager {
      * @throws OutOfRangeException - when requested validor does not exist
      * @return boolean
      */
-    public function hasErrors($name, $namespaced = false) {
+    public function hasErrors($name) {
         return $this->getValidator($name)
-            ->hasErrors($namespaced);
+            ->hasErrors();
     }
 
     /**
@@ -50,9 +49,9 @@ class Manager {
      * @throws OutOfRangeException - when requested validor does not exist
      * @return array
      */
-    public function getData($name, $namespaced = false) {
+    public function getData($name) {
         return $this->getValidator($name)
-            ->getData($namespaced);
+            ->getData();
     }
 
     /**

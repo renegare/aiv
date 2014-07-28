@@ -32,12 +32,6 @@ interface ValidatorInterface {
     public function getData();
 
     /**
-     * set namespace of the data to get from the input
-     * @param string $name
-     */
-    public function setName($name);
-
-    /**
      * allow for user defined short hand constrant config to be handled by an
      * external resolver. set it here
      * @param ContraintResolverInterface $resolver
@@ -59,7 +53,7 @@ interface ValidatorInterface {
     public function setOptions(array $options);
 
     /**
-     * set name space of incoming data to validate
+     * set namespace of incoming data to validate
      * @param array $options
      */
     public function setNamespace($namespace);

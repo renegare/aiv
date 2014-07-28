@@ -37,16 +37,16 @@ class SilexProviderNamespacedTest extends BaseTestCase {
             $validator = $apiValidator->getValidator('test-name');
             $validator->setNamespace('test-name');
 
-            if($apiValidator->hasErrors('test-name')) {
+            if($validator->hasErrors()) {
                 $errors = [];
-                foreach($apiValidator->getErrors('test-name') as $violation) {
+                foreach($validator->getErrors() as $violation) {
                     $path = preg_replace('/[\[\]]/', '', $violation->getPropertyPath());
                     $errors[$path] = $violation->getMessage();
                 }
                 return sprintf('You have errors: <pre>%s</pre>', print_r($errors, true));
             } else {
                 return sprintf('You sent me valid data:<br /><pre>%s</pre>',
-                    print_r($apiValidator->getData('test-name'), true));
+                    print_r($validator->getData(), true));
             }
         });
         // Taken from the README.md: END

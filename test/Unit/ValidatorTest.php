@@ -64,7 +64,6 @@ class ValidatorTest extends BaseTestCase {
 
         $validator = new Validator();
         $validator->setNamespace('test-name');
-        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint, $lengthConstraint],
             'email' => [$notBlankConstraint, $emailConstraint]
@@ -210,7 +209,6 @@ class ValidatorTest extends BaseTestCase {
             ]);
 
         $validator = new Validator();
-        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint, $lengthConstraint],
             'email' => [$notBlankConstraint, $emailConstraint]
@@ -248,7 +246,6 @@ class ValidatorTest extends BaseTestCase {
 
         $validator = new Validator();
         $validator->setOptions(['cache' => true]);
-        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint]
         ]);
@@ -274,7 +271,6 @@ class ValidatorTest extends BaseTestCase {
 
         $validator = new Validator();
         $validator->setOptions(['allow.extra.params' => true]);
-        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint]
         ]);
@@ -295,7 +291,6 @@ class ValidatorTest extends BaseTestCase {
 
         $validator = new Validator();
         $validator->setOptions(['allow.missing.params' => true]);
-        $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint],
             'email' => [$notBlankConstraint]
@@ -325,7 +320,6 @@ class ValidatorTest extends BaseTestCase {
         $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
 
         $validator = new Validator();
-        $validator->setName('test-name');
         $validator->setConstraints(['name' => [$notBlankConstraint]]);
 
         $mockInput = $this->getMock('AIV\InputInterface');
