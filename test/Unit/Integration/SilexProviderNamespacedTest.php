@@ -7,7 +7,7 @@ use Silex\Application;
 use AIV\Integration\SilexProvider;
 use Symfony\Component\HttpKernel\Client;
 
-class SilexProviderTest extends BaseTestCase {
+class SilexProviderNamespacedTest extends BaseTestCase {
 
     public function setup() {
         // Taken from the README.md: START
@@ -34,6 +34,9 @@ class SilexProviderTest extends BaseTestCase {
 
         $app->post('/', function(Application $app) {
             $apiValidator = $app['validator'];
+            $validator = $apiValidator->getValidator('test-name');
+            $validator->setNamespace('test-name');
+
             if($apiValidator->hasErrors('test-name')) {
                 $errors = [];
                 foreach($apiValidator->getErrors('test-name') as $violation) {
@@ -69,7 +72,7 @@ class SilexProviderTest extends BaseTestCase {
         $client = new Client($this->app, []);
 
         $label = 'Test Case: ' . $label;
-        $client->request('POST', '/', $postData);
+        $client->request('POST', '/', ['test-name' => $postData]);
         $response = $client->getResponse();
         $this->assertTrue($response->isOk(), $label);
         $this->assertContains($expectedResponse, $response->getContent(), $label);
@@ -84,7 +87,7 @@ class SilexProviderTest extends BaseTestCase {
         $client = new Client($this->app, []);
 
         $label = 'Test Case: ' . $label;
-        $client->request('POST', '/', [], [], [], json_encode($data));
+        $client->request('POST', '/', [], [], [], json_encode(['test-name' => $data]));
         $response = $client->getResponse();
         $this->assertTrue($response->isOk(), $label);
         $this->assertContains($expectedResponse, $response->getContent(), $label);

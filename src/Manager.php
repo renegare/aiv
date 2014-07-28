@@ -40,9 +40,9 @@ class Manager {
      * @throws OutOfRangeException - when requested validor does not exist
      * @return boolean
      */
-    public function hasErrors($name) {
+    public function hasErrors($name, $namespaced = false) {
         return $this->getValidator($name)
-            ->hasErrors();
+            ->hasErrors($namespaced);
     }
 
     /**
@@ -50,9 +50,9 @@ class Manager {
      * @throws OutOfRangeException - when requested validor does not exist
      * @return array
      */
-    public function getData($name) {
+    public function getData($name, $namespaced = false) {
         return $this->getValidator($name)
-            ->getData();
+            ->getData($namespaced);
     }
 
     /**

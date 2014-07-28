@@ -8,23 +8,40 @@ use Symfony\Component\HttpFoundation\Request;
 
 class JSONInputTest extends BaseTestCase {
 
-    public function testPurpose() {
-        $expectedData = [
-            'namespace' => [
-                'test-name' => ['...'],
-                'something-else' => ['...incorrect...']
-            ]
+    protected $expectedData = [
+        'test-name' => ['...'],
+        'something-else' => ['...incorrect...']
+    ];
+
+    public function provideRequests() {
+        $expectedJSONData = json_encode($this->expectedData);
+        return [
+            [Request::create('/', 'GET', $this->expectedData)],
+            [Request::create('/', 'POST', [], [], [], [], $expectedJSONData)],
+            [Request::create('/', 'PUT', [], [], [], [], $expectedJSONData)],
+            [Request::create('/', 'DELETE', [], [], [], [], $expectedJSONData)]
         ];
-
-        $jsonBody = json_encode($expectedData);
-        $request = Request::create('/', 'POST', [], [], [], [], $jsonBody);
-
-        $input = new JSONInput();
-        $input->setRequest($request);
-        $this->assertEquals($expectedData['namespace'], $input->getData('namespace'));
     }
 
-    public function testReturnDataNoNameSpace() {
+    /**
+     * @dataProvider provideRequests
+     */
+    public function testGetData($request) {
+        $input = new JSONInput();
+        $input->setRequest($request);
+        $this->assertEquals($this->expectedData, $input->getData());
+    }
+
+    /**
+     * @dataProvider provideRequests
+     */
+    public function testGetDataNamespaced($request) {
+        $input = new JSONInput();
+        $input->setRequest($request);
+        $this->assertEquals($this->expectedData['test-name'], $input->getData('test-name'));
+    }
+
+    public function xtestReturnDataNoNameSpace() {
         $expectedData = [
             'namespace' => [
                 'test-name' => ['...'],

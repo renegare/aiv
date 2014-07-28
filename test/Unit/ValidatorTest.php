@@ -25,6 +25,45 @@ class ValidatorTest extends BaseTestCase {
             ]);
 
         $validator = new Validator();
+        $validator->setConstraints([
+            'name' => [$notBlankConstraint, $lengthConstraint],
+            'email' => [$notBlankConstraint, $emailConstraint]
+        ]);
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->once())
+            ->method('getData')
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals(null, $name);
+                return [
+                    'name' => 'John Smith',
+                    'email' => 'user@renegare.com'];
+            }));
+
+        $validator->setInput($mockInput);
+        $this->assertFalse($validator->hasErrors());
+
+        $mockInput = $this->getMock('AIV\InputInterface');
+        $mockInput->expects($this->once())
+            ->method('getData')
+            ->will($this->returnCallback(function($name){
+                $this->assertEquals(null, $name);
+                return ['name' => 'John Smith'];
+            }));
+        $validator->setInput($mockInput);
+        $this->assertTrue($validator->hasErrors());
+    }
+
+    public function testHasErrorsNamespaced() {
+        $notBlankConstraint = new \Symfony\Component\Validator\Constraints\NotBlank();
+        $emailConstraint = new \Symfony\Component\Validator\Constraints\Email();
+        $lengthConstraint = new \Symfony\Component\Validator\Constraints\Length([
+            'min' => 2,
+            'max' => 20
+            ]);
+
+        $validator = new Validator();
+        $validator->setNamespace('test-name');
         $validator->setName('test-name');
         $validator->setConstraints([
             'name' => [$notBlankConstraint, $lengthConstraint],
@@ -181,8 +220,7 @@ class ValidatorTest extends BaseTestCase {
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->any())
             ->method('getData')
-            ->will($this->returnCallback(function($name){
-                $this->assertEquals('test-name', $name);
+            ->will($this->returnCallback(function(){
                 return ['name' => 'John Smith'];
             }));
         $validator->setInput($mockInput);
@@ -204,8 +242,7 @@ class ValidatorTest extends BaseTestCase {
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->once())
             ->method('getData')
-            ->will($this->returnCallback(function($name){
-                $this->assertEquals('test-name', $name);
+            ->will($this->returnCallback(function(){
                 return ['name' => 'John Smith'];
             }));
 
@@ -231,8 +268,7 @@ class ValidatorTest extends BaseTestCase {
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->any())
             ->method('getData')
-            ->will($this->returnCallback(function($name) use ($expectedData){
-                $this->assertEquals('test-name', $name);
+            ->will($this->returnCallback(function() use ($expectedData){
                 return $expectedData;
             }));
 
@@ -253,8 +289,7 @@ class ValidatorTest extends BaseTestCase {
         $mockInput = $this->getMock('AIV\InputInterface');
         $mockInput->expects($this->any())
             ->method('getData')
-            ->will($this->returnCallback(function($name) use ($expectedData){
-                $this->assertEquals('test-name', $name);
+            ->will($this->returnCallback(function() use ($expectedData){
                 return $expectedData;
             }));
 

@@ -45,7 +45,6 @@ interface ValidatorInterface {
      */
     public function setConstraintResolver(ConstraintResolverInterface $resolver);
 
-
     /**
      * allow for user defined short hand constrant config to be handled by an
      * external resolver. set it here
@@ -58,4 +57,10 @@ interface ValidatorInterface {
      * @param array $options
      */
     public function setOptions(array $options);
+
+    /**
+     * set name space of incoming data to validate
+     * @param array $options
+     */
+    public function setNamespace($namespace);
 }

@@ -24,6 +24,8 @@ class Validator implements \AIV\ValidatorInterface {
     protected $options;
     /** @var array */
     protected $cachedData;
+    /** @var string */
+    protected $namespace;
 
     /**
      * {@inheritdoc}
@@ -50,7 +52,7 @@ class Validator implements \AIV\ValidatorInterface {
     /**
      * {@inheritdoc}
      */
-    public function getData() {
+    public function getData($namespaced = false) {
         if($this->hasErrors()) {
             throw new \RuntimeException('Cannot return data, as data is invalid!');
         }
@@ -60,7 +62,7 @@ class Validator implements \AIV\ValidatorInterface {
 
     protected function getRawData() {
         if(!$this->cachedData) {
-            $data = $this->input->getData($this->name);
+            $data = $this->input->getData($this->namespace);
             if($this->options['cache']) {
                 $this->cachedData = $data;
             }
@@ -177,7 +179,7 @@ class Validator implements \AIV\ValidatorInterface {
     }
 
     /**
-     *
+     * ...
      */
     public function verifyNotEmpty($data) {
         if(!is_array($data) || count($data) < 1) {
@@ -185,5 +187,12 @@ class Validator implements \AIV\ValidatorInterface {
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNamespace($namespace) {
+        $this->namespace = $namespace;
     }
 }

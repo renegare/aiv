@@ -42,17 +42,21 @@ $app['email.validator'] = $app->share(function() {
 });
 
 $app->post('/', function(Application $app) {
-    $apiValidator = $app['aiv'];
+    
+    $apiValidator = $app['validator'];
+
     if($apiValidator->hasErrors('test-name')) {
+
         $errors = [];
         foreach($apiValidator->getErrors('test-name') as $violation) {
             $path = preg_replace('/[\[\]]/', '', $violation->getPropertyPath());
             $errors[$path] = $violation->getMessage();
         }
         return sprintf('You have errors: <pre>%s</pre>', print_r($errors, true));
+
     } else {
-        return sprintf('You sent me valid data:<br /><pre>%s</pre>',
-            print_r($apiValidator->getData('test-name'), true));
+
+        return sprintf('You sent me valid data:<br /><pre>%s</pre>', print_r($apiValidator->getData('test-name'), true));
     }
 });
 

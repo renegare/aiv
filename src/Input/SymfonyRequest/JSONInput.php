@@ -2,12 +2,21 @@
 
 namespace AIV\Input\SymfonyRequest;
 
-class JSONInput extends AbstractInput {
+class JSONInput extends FormInput {
 
     /**
      * {@inheritdoc}
      */
     public function getData($name = null) {
+        $request = $this->request;
+        $dataSrc = 'request';
+
+        switch(strtolower($request->getMethod())) {
+            case 'get':
+                return parent::getData($name);
+                break;
+        }
+
         $json = $this->request->getContent();
         $data = @json_decode($json, true);
 
@@ -21,4 +30,5 @@ class JSONInput extends AbstractInput {
 
         return $data;
     }
+
 }
