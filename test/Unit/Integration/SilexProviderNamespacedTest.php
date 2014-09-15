@@ -13,6 +13,7 @@ class SilexProviderNamespacedTest extends BaseTestCase {
         // Taken from the README.md: START
         $app = new \Silex\Application();
         $app->register(new \AIV\Integration\SilexProvider, [
+            'aiv.namespaced' => true,
             'aiv.validators' => [
                 'test-name' => [
                     'options' => [
@@ -35,7 +36,6 @@ class SilexProviderNamespacedTest extends BaseTestCase {
         $app->post('/', function(Application $app) {
             $apiValidator = $app['validator'];
             $validator = $apiValidator->getValidator('test-name');
-            $validator->setNamespace('test-name');
 
             if($validator->hasErrors()) {
                 $errors = [];

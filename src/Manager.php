@@ -9,6 +9,8 @@ class Manager {
     /** @var InputInterface */
     protected $input;
 
+    protected $namespaced = false;
+
     /**
      * add/register an input validator instance. If two or more validators are
      * registerd with the same name, an error is thrown
@@ -68,6 +70,9 @@ class Manager {
         $validator = $this->validators[$name];
         $validator->setInput($this->input);
 
+        if($this->namespaced) {
+            $validator->setNamespace($name);
+        }
         return $validator;
     }
 
@@ -94,5 +99,9 @@ class Manager {
     public function getErrors($name) {
         return $this->getValidator($name)
             ->getErrors();
+    }
+
+    public function enableNamespace() {
+        $this->namespaced = true;
     }
 }

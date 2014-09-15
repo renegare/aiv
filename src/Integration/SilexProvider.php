@@ -22,12 +22,17 @@ class SilexProvider implements ServiceProviderInterface, \AIV\ConstraintResolver
     public function register(Application $app) {
         $this->app = $app;
 
+        $app['aiv.namespaced'] = false;
         $app['validator'] = function () use ($app) {
             return $app['aiv'];
         };
 
         $app['aiv'] = $app->share(function(Application $app) {
             $manager = new Manager();
+
+            if($app['aiv.namespaced']) {
+                $manager->enableNamespace();
+            }
 
             $validators = $app['aiv.validators'];
             foreach($validators as $name => $validatorConstraints) {
